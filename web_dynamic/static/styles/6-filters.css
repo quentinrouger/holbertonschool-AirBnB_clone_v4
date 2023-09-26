@@ -40,13 +40,21 @@ button:hover {
     margin-top: 0;
     font-weight: 400;
     font-size: 14px;
+    white-space: nowrap;  
+    text-overflow: ellipsis;  
+    max-width: 100%;
 }
+
+input {
+    margin-left: 10px;
+}
+
 .locations {
     height: 100%;
     width: 25%;
     border-right: 1px solid #DDDDDD;
 }
-.amenities {
+.amenities h4 {
     height: 100%;
     width: 25%;
 }
