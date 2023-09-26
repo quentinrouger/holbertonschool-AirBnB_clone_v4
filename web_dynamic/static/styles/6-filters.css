@@ -40,9 +40,6 @@ button:hover {
     margin-top: 0;
     font-weight: 400;
     font-size: 14px;
-    white-space: nowrap;  
-    text-overflow: ellipsis;  
-    max-width: 100%;
 }
 
 input {
@@ -54,9 +51,13 @@ input {
     width: 25%;
     border-right: 1px solid #DDDDDD;
 }
+
 .amenities h4 {
-    height: 100%;
-    width: 25%;
+    width: 20vw;
+    white-space: nowrap;  
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .popover {
@@ -72,6 +73,7 @@ input {
     max-height: 300px;
 }
 
+
 .popover::-webkit-scrollbar{
     width: 0px;
 }
@@ -80,6 +82,16 @@ input {
     padding: 10px 0;
     margin-left: -5px;
     margin-top: 0%;
+    visibility: hidden;
+    width: 115%;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    background: #FAFAFA;
+    padding-bottom: 15px;
+    height: 300px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    max-height: 300px;
 }
 
 .amenities .popover ul{
