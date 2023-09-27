@@ -36,9 +36,9 @@ $(document).ready(function () {
     fetch(apiUrlPlacesSearch, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ amenities: Object.keys(amenities) }),
+      body: JSON.stringify({ amenities: Object.keys(amenities) })
     })
       .then((response) => response.json())
       .then((data) => {
