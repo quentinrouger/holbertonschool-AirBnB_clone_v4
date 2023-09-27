@@ -1,73 +1,81 @@
 $(document).ready(function () {
   const selectedAmenities = {};
 
-  $('input[type="checkbox"]').change(function () {
+  // Listen for changes on input checkboxes
+  $('input[type=checkbox]').change(function () {
     const amenityId = $(this).data('id');
     const amenityName = $(this).data('name');
-
     if (this.checked) {
       selectedAmenities[amenityId] = amenityName;
     } else {
       delete selectedAmenities[amenityId];
     }
-
-    const amenitiesText = Object.values(selectedAmenities).join(', ');
-    $('.amenities h4').text(amenitiesText);
+    $('#selected_amenities').text(Object.values(selectedAmenities).join(', '));
   });
 
   const apiUrlStatus = 'http://127.0.0.1:5001/api/v1/status/';
+
   const updateApiStatus = () => {
-    $.ajax({
-      type: 'GET',
-      url: apiUrlStatus,
-      success: (data) => {
-        const apiStatusElement = $('#api_status');
+    fetch(apiUrlStatus)
+      .then((response) => response.json())
+      .then((data) => {
         if (data.status === 'OK') {
-          apiStatusElement.addClass('available');
+          $('#api_status').addClass('available');
         } else {
-          apiStatusElement.removeClass('available');
+          $('#api_status').removeClass('available');
         }
-      },
-      error: () => {
-        console.error('Error fetching API status.');
-      }
-    });
+      })
+      .catch(() => {
+        $('#api_status').removeClass('available');
+      });
   };
 
   const apiUrlPlacesSearch = 'http://127.0.0.1:5001/api/v1/places_search/';
+
   const updatePlaces = (amenities) => {
-    $.ajax({
-      type: 'POST',
-      url: apiUrlPlacesSearch,
-      contentType: 'application/json',
-      data: JSON.stringify({ amenities: Object.keys(amenities) }),
-      success: (data) => {
-        displayPlaces(data);
+    fetch(apiUrlPlacesSearch, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      error: () => {
+      body: JSON.stringify({ amenities: Object.keys(amenities) }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Triez le tableau 'data' par ordre alphabétique en fonction du nom de chaque place
+        data.sort((a, b) => {
+          const nameA = a.name.toLowerCase();
+          const nameB = b.name.toLowerCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+        displayPlaces(data);
+      })
+      .catch(() => {
         console.error('Error loading places.');
-      }
-    });
+      });
   };
 
   const displayPlaces = (places) => {
     const placesSection = $('.places');
     placesSection.empty();
-
-    places.forEach(place => {
+    places.forEach((place) => {
       const article = $('<article></article>');
-      article.html(`
-        <div class="title_box">
-          <h2>${place.name}</h2>
-          <div class="price_by_night">$${place.price_by_night}</div>
-        </div>
-        <div class="information">
-          <div class="max_guest">${place.max_guest} Guest${place.max_guest !== 1 ? 's' : ''}</div>
-          <div class="number_rooms">${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>
-          <div class="number_bathrooms">${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>
-        </div>
-        <div class="description">${place.description}</div>
-      `);
+      article.append(`<div class="title_box">
+                        <h2>${place.name}</h2>
+                        <div class="price_by_night">$${place.price_by_night}</div>
+                      </div>
+                      <div class="information">
+                        <div class="max_guest">${place.max_guest} Guest${place.max_guest !== 1 ? 's' : ''}</div>
+                        <div class="number_rooms">${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>
+                        <div class="number_bathrooms">${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>
+                      </div>
+                      <div class="description">${place.description}</div>`);
       placesSection.append(article);
     });
   };
@@ -75,7 +83,7 @@ $(document).ready(function () {
   updateApiStatus();
   updatePlaces(selectedAmenities);
 
-  $('button').click(function () {
+  $('button').click(() => {
     updatePlaces(selectedAmenities);
   });
 });
